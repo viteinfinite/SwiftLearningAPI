@@ -1,10 +1,35 @@
 import Vapor
+import Fluent
+import FluentPostgresDriver
 
-// configures your application
 public func configure(_ app: Application) throws {
-    // uncomment to serve files from /Public folder
-    // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
-    // register routes
+    guard
+        let dbHostname = Environment.get("DB_HOSTNAME"),
+        let dbUsername = Environment.get("DB_USERNAME"),
+        let dbPassword = Environment.get("DB_PASSWORD"),
+        let dbName = Environment.get("DB_NAME")
+        else { fatalError("Missing DB info") }
+
+    let tlsConfiguration: TLSConfiguration?
+    if let dbCertFilename = Environment.get("DB_CERT_FILENAME") {
+        let rootCertificates = try NIOSSLCertificate.fromPEMFile(dbCertFilename)
+        tlsConfiguration = TLSConfiguration.forClient(certificateVerification: .noHostnameVerification, trustRoots: .certificates(root))
+    } else {
+        tlsConfiguration = nil
+    }
+
+    let configuration = PostgresConfiguration(
+        hostname: dbHostname,
+        port: 5432,
+        username: dbUsername,
+        password: dbPassword,
+        database: dbName,
+        tlsConfiguration: tlsConfiguration
+    )
+    try app.databases.use(.postgres(configuration: configuration), as: .psql)
+
+    app.migrations.add(CreateContentSources())
+
     try routes(app)
 }
