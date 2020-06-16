@@ -24,4 +24,4 @@ cp ".build/release/$executable" "$target/"
 cp -Pv /usr/lib/swift/linux/lib*so* "$target"
 cd "$target"
 ln -s "$executable" "bootstrap"
-zip --symlinks run.zip *
+zip --symlinks "$1.zip" *

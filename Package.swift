@@ -8,7 +8,8 @@ let package = Package(
         .macOS(.v10_15),
     ],
     products: [
-        .executable(name: "Run", targets: ["Run"]),
+        .executable(name: "RunIndexer", targets: ["RunIndexer"]),
+        .executable(name: "RunAPI", targets: ["RunAPI"]),
         .library(name: "SwiftLearningAPI", targets: ["SwiftLearningAPI"]),
     ],
     dependencies: [
@@ -23,7 +24,8 @@ let package = Package(
             .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
             .product(name: "Vapor", package: "vapor"),
         ]),
-        .target(name: "Run", dependencies: ["SwiftLearningAPI"]),
+        .target(name: "RunIndexer", dependencies: ["SwiftLearningAPI"]),
+        .target(name: "RunAPI", dependencies: ["SwiftLearningAPI"]),
         .testTarget(name: "SwiftLearningAPITests", dependencies: ["SwiftLearningAPI"]),
     ]
 )
