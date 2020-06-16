@@ -6,10 +6,10 @@ struct CreateContentSources: Migration {
         database.schema("content_sources")
             .id()
             .field("name", .string)
-            .field("rssUrl", .json)
-            .field("podcastUrl", .json)
-            .field("playlistUrl", .json)
-            .field("websiteUrl", .json)
+            .field("rss_url", .json)
+            .field("podcast_url", .json)
+            .field("playlist_url", .json)
+            .field("website_url", .json)
             .create()
     }
 

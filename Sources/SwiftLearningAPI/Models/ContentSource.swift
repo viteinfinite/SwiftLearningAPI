@@ -11,24 +11,28 @@ final class ContentSource: Model, Content {
     @Field(key: "name")
     var name: String
 
-    @Field(key: "rssUrl")
+    @Field(key: "rss_url")
     var rssUrl: URL?
 
-    @Field(key: "podcastUrl")
+    @Field(key: "podcast_url")
     var podcastUrl: URL?
 
-    @Field(key: "playlistUrl")
+    @Field(key: "playlist_url")
     var playlistUrl: URL?
 
-    @Field(key: "websiteUrl")
+    @Field(key: "website_url")
     var websiteUrl: URL?
+
+    @Children(for: \.$source)
+    var contents: [LearningContent]
 
     init() { }
 
-    init(id: UUID? = nil, name: String, rssUrl: URL, websiteUrl: URL?) {
+    init(id: UUID? = nil, name: String, rssUrl: URL?, podcastUrl: URL?, playlistUrl: URL?, websiteUrl: URL?) {
         self.id = id
         self.name = name
         self.rssUrl = rssUrl
+        self.podcastUrl = podcastUrl
         self.websiteUrl = websiteUrl
     }
 }

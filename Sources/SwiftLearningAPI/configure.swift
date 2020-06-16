@@ -14,7 +14,7 @@ public func configure(_ app: Application) throws {
     let tlsConfiguration: TLSConfiguration?
     if let dbCertFilename = Environment.get("DB_CERT_FILENAME") {
         let rootCertificates = try NIOSSLCertificate.fromPEMFile(dbCertFilename)
-        tlsConfiguration = TLSConfiguration.forClient(certificateVerification: .noHostnameVerification, trustRoots: .certificates(root))
+        tlsConfiguration = TLSConfiguration.forClient(certificateVerification: .noHostnameVerification, trustRoots: .certificates(rootCertificates))
     } else {
         tlsConfiguration = nil
     }
@@ -27,9 +27,10 @@ public func configure(_ app: Application) throws {
         database: dbName,
         tlsConfiguration: tlsConfiguration
     )
-    try app.databases.use(.postgres(configuration: configuration), as: .psql)
+    app.databases.use(.postgres(configuration: configuration), as: .psql)
 
     app.migrations.add(CreateContentSources())
+    app.migrations.add(CreateLearningContent())
 
     try routes(app)
 }
