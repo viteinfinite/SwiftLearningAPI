@@ -12,7 +12,7 @@ struct CreateLearningContent: Migration {
                 LearningContentAuthor.schemaBuilder(for: database).create()
             }
             .flatMap {
-                LearningContent(title: "Vispa teresa", kind: .blogPost, url: URL(string: "http://www.barbo.com")!, sourceId: ContentSourceItem.swiftBySundell.id!)
+                LearningContent(title: "Vispa teresa", kind: .blogPost, url: URL(string: "http://www.barbo.com")!, sourceId: ContentSource.swiftBySundell.id!)
                     .save(on: database)
             }
     }
