@@ -1,5 +1,6 @@
 import Foundation
 import Fluent
+import SwiftLearningCommon
 
 struct CreateContentSources: Migration {
     private func createSchema(on database: Database) -> EventLoopFuture<Void> {

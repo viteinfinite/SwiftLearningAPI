@@ -1,9 +1,10 @@
 import Vapor
 import Fluent
+import SwiftLearningCommon
 
 func routes(_ app: Application) throws {
     app.get { req in
-        return "It works!"
+        return "api works!"
     }
 
     app.get("hello") { req -> String in

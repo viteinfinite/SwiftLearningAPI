@@ -8,9 +8,11 @@ let package = Package(
         .macOS(.v10_15),
     ],
     products: [
+        .library(name: "SwiftLearningCommon", targets: ["SwiftLearningCommon"]),
+        .library(name: "SwiftLearningIndexer", targets: ["SwiftLearningIndexer"]),
+        .library(name: "SwiftLearningAPI", targets: ["SwiftLearningAPI"]),
         .executable(name: "RunIndexer", targets: ["RunIndexer"]),
         .executable(name: "RunAPI", targets: ["RunAPI"]),
-        .library(name: "SwiftLearningAPI", targets: ["SwiftLearningAPI"]),
     ],
     dependencies: [
         .package(url: "https://github.com/vapor/vapor.git", from: "4.8.0"),
@@ -19,12 +21,24 @@ let package = Package(
         .package(url: "https://github.com/nmdias/FeedKit.git", from: "9.1.2"),
     ],
     targets: [
-        .target(name: "SwiftLearningAPI", dependencies: [
+        .target(name: "SwiftLearningCommon", dependencies: [
             .product(name: "Fluent", package: "fluent"),
             .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
             .product(name: "Vapor", package: "vapor"),
         ]),
-        .target(name: "RunIndexer", dependencies: ["SwiftLearningAPI"]),
+        .target(name: "SwiftLearningIndexer", dependencies: [
+            .product(name: "Fluent", package: "fluent"),
+            .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
+            .product(name: "Vapor", package: "vapor"),
+            "SwiftLearningCommon"
+        ]),
+        .target(name: "SwiftLearningAPI", dependencies: [
+            .product(name: "Fluent", package: "fluent"),
+            .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
+            .product(name: "Vapor", package: "vapor"),
+            "SwiftLearningCommon"
+        ]),
+        .target(name: "RunIndexer", dependencies: ["SwiftLearningIndexer"]),
         .target(name: "RunAPI", dependencies: ["SwiftLearningAPI"]),
         .testTarget(name: "SwiftLearningAPITests", dependencies: ["SwiftLearningAPI"]),
     ]

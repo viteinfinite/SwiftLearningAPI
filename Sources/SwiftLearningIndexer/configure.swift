@@ -30,5 +30,8 @@ public func configure(_ app: Application) throws {
     )
     app.databases.use(.postgres(configuration: configuration), as: .psql)
 
+    app.migrations.add(CreateContentSources())
+    app.migrations.add(CreateLearningContent())
+
     try routes(app)
 }

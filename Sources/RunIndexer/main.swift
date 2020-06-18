@@ -1,4 +1,4 @@
-import SwiftLearningAPI
+import SwiftLearningIndexer
 import Vapor
 
 var env = try Environment.detect()
