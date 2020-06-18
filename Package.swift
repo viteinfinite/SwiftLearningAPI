@@ -19,6 +19,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0-rc.3.1"),
         .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0-rc.3"),
         .package(url: "https://github.com/nmdias/FeedKit.git", from: "9.1.2"),
+        .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.0.0-rc.3")
     ],
     targets: [
         .target(name: "SwiftLearningCommon", dependencies: [
@@ -30,7 +31,9 @@ let package = Package(
             .product(name: "Fluent", package: "fluent"),
             .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
             .product(name: "Vapor", package: "vapor"),
-            "SwiftLearningCommon"
+            .product(name: "QueuesRedisDriver", package: "queues-redis-driver"),
+            "SwiftLearningCommon",
+            "FeedKit"
         ]),
         .target(name: "SwiftLearningAPI", dependencies: [
             .product(name: "Fluent", package: "fluent"),

@@ -9,7 +9,7 @@ public final class LearningContentAuthor: Model {
         database.schema(schema)
             .id()
             .field("learning_content_id", .uuid, .required, .references("learning_contents", "id"))
-            .field("author_id", .uuid, .required, .references("authors", "id"))
+            .field("author_id", .string, .required, .references("authors", "id"))
     }
 
     @ID(key: .id)
@@ -23,7 +23,7 @@ public final class LearningContentAuthor: Model {
 
     public init() { }
 
-    public init(learningContentId: UUID, authorId: UUID) {
+    public init(learningContentId: UUID, authorId: String) {
         self.$learningContent.id = learningContentId
         self.$author.id = authorId
     }

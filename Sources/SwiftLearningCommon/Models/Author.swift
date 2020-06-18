@@ -7,12 +7,12 @@ public final class Author: Model {
 
     public static func schemaBuilder(for database: Database) -> SchemaBuilder {
         database.schema(schema)
-            .id()
+            .field("id", .string, .identifier(auto: false))
             .field("name", .string)
     }
 
-    @ID(key: .id)
-    public var id: UUID?
+    @ID(custom: "id", generatedBy: .user)
+    public var id: String?
 
     @Field(key: "name")
     public var name: String
@@ -22,8 +22,11 @@ public final class Author: Model {
 
     public init() { }
 
-    public init(id: UUID? = nil, name: String) {
-        self.id = id
+    public init(name: String) {
+        self.id = name
+            .lowercased()
+            .components(separatedBy: .whitespacesAndNewlines)
+            .joined(separator: "-")
         self.name = name
     }
 }

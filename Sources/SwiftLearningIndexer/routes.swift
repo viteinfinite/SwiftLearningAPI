@@ -7,7 +7,13 @@ func routes(_ app: Application) throws {
         return "indexer works!"
     }
 
-    app.get("start") { req in
-        LearningContent.query(on: req.db).all()
+    app.get("start") { req -> EventLoopFuture<String> in
+        req
+            .queue
+            .dispatch(
+                RSSJob.self,
+                ContentSource.all
+            )
+            .map { "done" }
     }
 }

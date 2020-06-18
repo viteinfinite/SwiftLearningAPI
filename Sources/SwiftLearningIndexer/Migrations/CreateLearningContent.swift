@@ -12,6 +12,9 @@ struct CreateLearningContent: Migration {
                 LearningContentAuthor.schemaBuilder(for: database).create()
             }
             .flatMap {
+                LearningContent.Kind.schemaBuilder(for: database).create().map { _ in }
+            }
+            .flatMap {
                 LearningContent(title: "Vispa teresa", kind: .blogPost, url: URL(string: "http://www.barbo.com")!, sourceId: ContentSource.swiftBySundell.id!)
                     .save(on: database)
             }

@@ -7,7 +7,7 @@ public final class ContentSource: Model, Content {
 
     public static func schemaBuilder(for database: Database) -> SchemaBuilder {
         database.schema(schema)
-            .id()
+            .field("id", .string, .identifier(auto: false))
             .field("name", .string)
             .field("rss_url", .json)
             .field("podcast_url", .json)
@@ -15,8 +15,8 @@ public final class ContentSource: Model, Content {
             .field("website_url", .json)
     }
 
-    @ID(key: .id)
-    public var id: UUID?
+    @ID(custom: "id", generatedBy: .user)
+    public var id: String?
 
     @Field(key: "name")
     public var name: String
@@ -38,11 +38,12 @@ public final class ContentSource: Model, Content {
 
     public init() { }
 
-    public init(id: UUID? = nil, name: String, rssUrl: URL?, podcastUrl: URL?, playlistUrl: URL?, websiteUrl: URL?) {
+    public init(id: String, name: String, rssUrl: URL?, podcastUrl: URL?, playlistUrl: URL?, websiteUrl: URL?) {
         self.id = id
         self.name = name
         self.rssUrl = rssUrl
         self.podcastUrl = podcastUrl
+        self.playlistUrl = playlistUrl
         self.websiteUrl = websiteUrl
     }
 }

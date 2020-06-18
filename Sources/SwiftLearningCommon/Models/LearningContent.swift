@@ -11,11 +11,19 @@ public final class LearningContent: Model, Content {
             .field("title", .string)
             .field("kind", .string)
             .field("url", .json)
-            .field("source_id", .uuid, .references("content_sources", "id"))
+            .field("source_id", .string, .references("content_sources", "id"))
     }
 
     public enum Kind: String, Codable {
         case blogPost
+        case podcastEpisode
+        case video
+
+        public static func schemaBuilder(for database: Database) -> EnumBuilder {
+            database.enum("blogPost")
+                .case("podcastEpisode")
+                .case("video")
+        }
     }
 
     @ID(key: .id)
@@ -25,9 +33,9 @@ public final class LearningContent: Model, Content {
     public var title: String
 
     @Siblings(through: LearningContentAuthor.self, from: \.$learningContent, to: \.$author)
-    var authors: [Author]
+    public var authors: [Author]
 
-    @Field(key: "kind")
+    @Enum(key: "kind")
     public var kind: Kind
 
     @Field(key: "url")
@@ -38,7 +46,7 @@ public final class LearningContent: Model, Content {
 
     public init() { }
 
-    public init(id: UUID? = nil, title: String, /* authors: [Author], */ kind: Kind, url: URL, sourceId: UUID) {
+    public init(id: UUID? = nil, title: String, kind: Kind, url: URL, sourceId: String) {
         self.id = id
         self.title = title
         self.kind = kind
