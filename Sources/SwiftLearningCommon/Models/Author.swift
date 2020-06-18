@@ -5,6 +5,12 @@ import Fluent
 public final class Author: Model {
     public static let schema = "authors"
 
+    public static func schemaBuilder(for database: Database) -> SchemaBuilder {
+        database.schema(schema)
+            .id()
+            .field("name", .string)
+    }
+
     @ID(key: .id)
     public var id: UUID?
 

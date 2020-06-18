@@ -4,14 +4,7 @@ import SwiftLearningCommon
 
 struct CreateContentSources: Migration {
     private func createSchema(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("content_sources")
-            .id()
-            .field("name", .string)
-            .field("rss_url", .json)
-            .field("podcast_url", .json)
-            .field("playlist_url", .json)
-            .field("website_url", .json)
-            .create()
+        ContentSource.schemaBuilder(for: database).create()
     }
 
     func prepare(on database: Database) -> EventLoopFuture<Void> {
@@ -22,6 +15,6 @@ struct CreateContentSources: Migration {
     }
 
     func revert(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("content_sources").delete()
+        database.schema(ContentSource.schema).delete()
     }
 }

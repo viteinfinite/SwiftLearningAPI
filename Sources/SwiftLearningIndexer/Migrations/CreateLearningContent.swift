@@ -3,18 +3,14 @@ import Fluent
 import SwiftLearningCommon
 
 struct CreateLearningContent: Migration {
-    private func createLearningContentSchema(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("learning_contents")
-            .id()
-            .field("title", .string)
-            .field("kind", .string)
-            .field("url", .json)
-            .field("source_id", .uuid, .references("content_sources", "id"))
-            .create()
-    }
-
     func prepare(on database: Database) -> EventLoopFuture<Void> {
-        createLearningContentSchema(on: database)
+        LearningContent.schemaBuilder(for: database).create()
+            .flatMap {
+                Author.schemaBuilder(for: database).create()
+            }
+            .flatMap {
+                LearningContentAuthor.schemaBuilder(for: database).create()
+            }
             .flatMap {
                 LearningContent(title: "Vispa teresa", kind: .blogPost, url: URL(string: "http://www.barbo.com")!, sourceId: ContentSourceItem.swiftBySundell.id!)
                     .save(on: database)
@@ -22,6 +18,12 @@ struct CreateLearningContent: Migration {
     }
 
     func revert(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("content_sources").delete()
+        database.schema(LearningContentAuthor.schema).delete()
+            .flatMap {
+                database.schema(LearningContent.schema).delete()
+            }
+            .flatMap {
+                database.schema(Author.schema).delete()
+            }
     }
 }
