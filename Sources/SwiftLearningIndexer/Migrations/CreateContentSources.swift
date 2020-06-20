@@ -7,7 +7,7 @@ struct CreateContentSources: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         ContentSource.schemaBuilder(for: database).create()
             .flatMap {
-                ContentSource.swiftBySundell.create(on: database)
+                ContentSourceIdentifier.swiftBySundell.contentSource.create(on: database)
             }
     }
 

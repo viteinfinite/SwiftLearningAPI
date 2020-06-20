@@ -15,7 +15,7 @@ struct CreateLearningContent: Migration {
                 LearningContent.Kind.schemaBuilder(for: database).create().map { _ in }
             }
             .flatMap {
-                LearningContent(title: "Vispa teresa", kind: .blogPost, url: URL(string: "http://www.barbo.com")!, sourceId: ContentSource.swiftBySundell.id!)
+                LearningContent(title: "Vispa teresa", kind: .blogPost, url: URL(string: "http://www.barbo.com")!, sourceId: ContentSourceIdentifier.swiftBySundell.rawValue)
                     .save(on: database)
             }
     }
