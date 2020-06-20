@@ -7,21 +7,25 @@ import Fluent
 
 class RSSJob: Job {
     enum Error: Swift.Error {
-        case missingUrl(contentSourceId: ContentSourceIdentifier)
+        case missingUrl(contentSourceId: String)
+        case contentSourceProviderNotFound(contentSourceId: String)
     }
 
     private let client: Client
     private let db: Database
 
-    private func fetchRSS(_ context: QueueContext, payload: [ContentSourceIdentifier]) -> EventLoopFuture<Void> {
+    private func fetchRSS(_ context: QueueContext, payload: [String]) -> EventLoopFuture<Void> {
         return EventLoopFuture.andAllComplete(
             payload.map { fetchRSS(context, contentSourceId: $0) },
             on: context.eventLoop
         )
     }
 
-    private func fetchRSS(_ context: QueueContext, contentSourceId: ContentSourceIdentifier) -> EventLoopFuture<Void> {
-        guard let rssUrl = contentSourceId.contentSource.rssUrl else {
+    private func fetchRSS(_ context: QueueContext, contentSourceId: String) -> EventLoopFuture<Void> {
+        guard let contentSourceProvider = AllContentSourceProviders.contentSourceProviderById[contentSourceId] else {
+            return context.eventLoop.makeFailedFuture(RSSJob.Error.contentSourceProviderNotFound(contentSourceId: contentSourceId))
+        }
+        guard let rssUrl = contentSourceProvider.source.rssUrl else {
             return context.eventLoop.makeFailedFuture(RSSJob.Error.missingUrl(contentSourceId: contentSourceId))
         }
         return client.get(URI(string: rssUrl.absoluteString))
@@ -50,19 +54,19 @@ class RSSJob: Job {
             .flatMap {
                 self.createEntriesInDb(
                     context: context,
-                    contentSourceId: contentSourceId,
+                    contentSourceProvider: contentSourceProvider,
                     insertableBlogPosts: $0
                 )
             }
     }
 
-    private func createEntriesInDb(context: QueueContext, contentSourceId: ContentSourceIdentifier, insertableBlogPosts: [IndexableBlogPost]) -> EventLoopFuture<Void> {
+    private func createEntriesInDb(context: QueueContext, contentSourceProvider: ContentSourceProvider, insertableBlogPosts: [IndexableBlogPost]) -> EventLoopFuture<Void> {
         insertableBlogPosts
-            .map { contentSourceId.enrich(blogPost: $0) }
+            .map { contentSourceProvider.enrich($0) }
             .save(to: db, on: context.eventLoop)
     }
 
-    func dequeue(_ context: QueueContext, _ payload: [ContentSourceIdentifier]) -> EventLoopFuture<Void> {
+    func dequeue(_ context: QueueContext, _ payload: [String]) -> EventLoopFuture<Void> {
         fetchRSS(context, payload: payload)
     }
 

@@ -21,16 +21,16 @@ public final class ContentSource: Model, Content {
     @Field(key: "name")
     public var name: String
 
-    @Field(key: "rss_url")
+    @OptionalField(key: "rss_url")
     public var rssUrl: URL?
 
-    @Field(key: "podcast_url")
+    @OptionalField(key: "podcast_url")
     public var podcastUrl: URL?
 
-    @Field(key: "playlist_url")
+    @OptionalField(key: "playlist_url")
     public var playlistUrl: URL?
 
-    @Field(key: "website_url")
+    @OptionalField(key: "website_url")
     public var websiteUrl: URL?
 
     @Children(for: \.$source)

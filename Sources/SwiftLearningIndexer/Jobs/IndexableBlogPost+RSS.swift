@@ -5,19 +5,19 @@ import Vapor
 import Fluent
 
 extension IndexableBlogPost {
-    static func from(rssFeedItem: RSSFeedItem, contentSourceId: ContentSourceIdentifier) -> Self? {
+    static func from(rssFeedItem: RSSFeedItem, contentSourceId: String) -> Self? {
         guard let urlString = rssFeedItem.link, let url = URL(string: urlString) else { return nil }
         return IndexableBlogPost(
             author: rssFeedItem.author.map { Author(name: $0) },
-            learningContent: LearningContent(title: rssFeedItem.title ?? "", kind: .blogPost, url: url, sourceId: contentSourceId.rawValue)
+            learningContent: LearningContent(title: rssFeedItem.title ?? "", kind: .blogPost, url: url, sourceId: contentSourceId)
         )
     }
 
-    static func from(atomFeedEntry: AtomFeedEntry, contentSourceId: ContentSourceIdentifier) -> Self? {
+    static func from(atomFeedEntry: AtomFeedEntry, contentSourceId: String) -> Self? {
         guard let urlString = atomFeedEntry.links?.first?.attributes?.href, let url = URL(string: urlString) else { return nil }
         return IndexableBlogPost(
             author: atomFeedEntry.authors?.first?.name.map { Author(name: $0) },
-            learningContent: LearningContent(title: atomFeedEntry.title ?? "", kind: .blogPost, url: url, sourceId: contentSourceId.rawValue)
+            learningContent: LearningContent(title: atomFeedEntry.title ?? "", kind: .blogPost, url: url, sourceId: contentSourceId)
         )
     }
 }
