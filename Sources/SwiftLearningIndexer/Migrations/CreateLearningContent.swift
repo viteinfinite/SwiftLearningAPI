@@ -14,10 +14,6 @@ struct CreateLearningContent: Migration {
             .flatMap {
                 LearningContent.Kind.schemaBuilder(for: database).create().map { _ in }
             }
-            .flatMap {
-                LearningContent(title: "Vispa teresa", kind: .blogPost, url: URL(string: "http://www.barbo.com")!, sourceId: ContentSourceIdentifier.swiftBySundell.rawValue)
-                    .save(on: database)
-            }
     }
 
     func revert(on database: Database) -> EventLoopFuture<Void> {

@@ -1,7 +1,7 @@
 import Foundation
 import Fluent
 
-public enum ContentSourceIdentifier: String, CaseIterable {
+public enum ContentSourceIdentifier: String, CaseIterable, Codable {
     case swiftBySundell
 
     public var contentSource: ContentSource {

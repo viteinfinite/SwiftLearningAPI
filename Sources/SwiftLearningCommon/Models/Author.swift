@@ -7,7 +7,7 @@ public final class Author: Model {
 
     public static func schemaBuilder(for database: Database) -> SchemaBuilder {
         database.schema(schema)
-            .field("id", .string, .identifier(auto: false))
+            .field("id", .string, .identifier(auto: false)).ignoreExisting()
             .field("name", .string)
     }
 

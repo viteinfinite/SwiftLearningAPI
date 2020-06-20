@@ -12,7 +12,7 @@ func routes(_ app: Application) throws {
             .queue
             .dispatch(
                 RSSJob.self,
-                ContentSourceIdentifier.allCases.map(\.contentSource)
+                ContentSourceIdentifier.allCases
             )
             .map { "done" }
     }
