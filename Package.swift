@@ -13,13 +13,15 @@ let package = Package(
         .library(name: "SwiftLearningAPI", targets: ["SwiftLearningAPI"]),
         .executable(name: "RunIndexer", targets: ["RunIndexer"]),
         .executable(name: "RunAPI", targets: ["RunAPI"]),
+        .executable(name: "RunContentSourceMerger", targets: ["RunContentSourceMerger"])
     ],
     dependencies: [
         .package(url: "https://github.com/vapor/vapor.git", from: "4.8.0"),
         .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0-rc.3.1"),
         .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0-rc.3"),
         .package(url: "https://github.com/nmdias/FeedKit.git", from: "9.1.2"),
-        .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.0.0-rc.3")
+        .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.0.0-rc.3"),
+        .package(url: "https://github.com/JohnSundell/Files", from: "4.1.0")
     ],
     targets: [
         .target(name: "SwiftLearningCommon", dependencies: [
