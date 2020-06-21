@@ -16,11 +16,13 @@ let package = Package(
         .executable(name: "RunContentSourceMerger", targets: ["RunContentSourceMerger"])
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.8.0"),
-        .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0-rc.3.1"),
-        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0-rc.3"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.10.0"),
+        .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
+        .package(url: "https://github.com/vapor/fluent-kit.git", from: "1.0.1"),
+        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0"),
         .package(url: "https://github.com/nmdias/FeedKit.git", from: "9.1.2"),
         .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.0.0-rc.3"),
+        .package(url: "https://github.com/vapor/queues.git", from: "1.0.0-rc.3"),
         .package(url: "https://github.com/JohnSundell/Files", from: "4.1.0")
     ],
     targets: [
@@ -45,7 +47,13 @@ let package = Package(
         ]),
         .target(name: "RunIndexer", dependencies: ["SwiftLearningIndexer"]),
         .target(name: "RunAPI", dependencies: ["SwiftLearningAPI"]),
-        .testTarget(name: "SwiftLearningAPITests", dependencies: ["SwiftLearningAPI"]),
+        .testTarget(name: "SwiftLearningIndexerTests", dependencies: [
+            .product(name: "XCTVapor", package: "vapor"),
+            .product(name: "XCTFluent", package: "fluent-kit"),
+            .product(name: "XCTQueues", package: "queues"),
+            "SwiftLearningIndexer"
+        ]),
+        .target(name: "RunContentSourceMerger", dependencies: ["Files"]),
     ]
 )
 
