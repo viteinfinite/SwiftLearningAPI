@@ -31,14 +31,15 @@ public func configure(_ app: Application) throws {
     )
     app.databases.use(.postgres(configuration: configuration), as: .psql)
 
-    app.migrations.add(CreateContentSources())
-    app.migrations.add(CreateLearningContent())
+    app.migrations.add(CreateSchemas())
+    app.migrations.add(AddInitialValues())
 
-    app.queues.use(try .redis(url: "redis://127.0.0.1:6379"))
-    let rssJob = RSSJob(client: app.client, db: app.db)
-    app.queues.add(rssJob)
-
-    try app.queues.startInProcessJobs(on: .default)
+    if Environment.get("RUN_QUEUE_DRIVER") == "TRUE" {
+        app.queues.use(try .redis(url: "redis://127.0.0.1:6379"))
+        let rssJob = RSSJob(client: app.client, db: app.db)
+        app.queues.add(rssJob)
+        try app.queues.startInProcessJobs(on: .default)
+    }
 
     try routes(app)
 }
