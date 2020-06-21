@@ -2,12 +2,12 @@ import Foundation
 import Vapor
 import Fluent
 
-public final class Author: Model {
+public final class Author: Model, Hashable {
     public static let schema = "authors"
 
     public static func schemaBuilder(for database: Database) -> SchemaBuilder {
         database.schema(schema)
-            .field("id", .string, .identifier(auto: false)).ignoreExisting()
+            .field("id", .string, .identifier(auto: false))
             .field("name", .string)
     }
 
@@ -28,5 +28,13 @@ public final class Author: Model {
             .components(separatedBy: .whitespacesAndNewlines)
             .joined(separator: "-")
         self.name = name
+    }
+
+    public static func == (lhs: Author, rhs: Author) -> Bool {
+        return lhs.id == rhs.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

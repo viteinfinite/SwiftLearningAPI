@@ -24,25 +24,21 @@ extension IndexableBlogPost {
 
 extension Array where Element == IndexableBlogPost {
     func save(to db: Database, on eventLoop: EventLoop) -> EventLoopFuture<Void> {
-        return primaryFutures(to: db, on: eventLoop)
-            .flatMap { self.relationshipFutures(to: db, on: eventLoop) }
+        return authorFutures(to: db, on: eventLoop)
+            .flatMap { self.learningContentFutures(to: db, on: eventLoop) }
     }
 
-    private func primaryFutures(to db: Database, on eventLoop: EventLoop) -> EventLoopFuture<Void> {
-        let futures = flatMap { insertableBlogPost -> [EventLoopFuture<Void>] in
-            var futures: [EventLoopFuture<Void>] = [insertableBlogPost.learningContent.save(on: db)]
-            if let author = insertableBlogPost.author {
-                futures.append(author.save(on: db))
+    private func authorFutures(to db: Database, on eventLoop: EventLoop) -> EventLoopFuture<Void> {
+        let uniqueAuthors = Array<Author>(Set(compactMap { $0.author }))
+        return EventLoopFuture.andAllComplete(uniqueAuthors.map { $0.save(on: db) }, on: eventLoop)
+    }
+
+    private func learningContentFutures(to db: Database, on eventLoop: EventLoop) -> EventLoopFuture<Void> {
+        let futures = map { insertableBlogPost -> EventLoopFuture<Void> in
+            return insertableBlogPost.learningContent.save(on: db).flatMap {
+                guard let author = insertableBlogPost.author else { return eventLoop.makeSucceededFuture(()) }
+                return insertableBlogPost.learningContent.$authors.attach(author, on: db)
             }
-            return futures
-        }
-        return EventLoopFuture.andAllComplete(futures, on: eventLoop)
-    }
-
-    private func relationshipFutures(to db: Database, on eventLoop: EventLoop) ->  EventLoopFuture<Void> {
-        let futures = compactMap { insertableBlogPost -> EventLoopFuture<Void>? in
-            guard let author = insertableBlogPost.author else { return nil }
-            return insertableBlogPost.learningContent.$authors.attach(author, on: db)
         }
         return EventLoopFuture.andAllComplete(futures, on: eventLoop)
     }

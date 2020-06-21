@@ -5,12 +5,12 @@ import Fluent
 public final class LearningContent: Model, Content {
     public static let schema = "learning_contents"
 
-    public static func schemaBuilder(for database: Database) -> SchemaBuilder {
+    public static func schemaBuilder(for database: Database, kind: DatabaseSchema.DataType) -> SchemaBuilder {
         database.schema(schema)
             .id()
             .field("title", .string)
-            .field("kind", .string)
-            .field("url", .json)
+            .field("kind", kind, .required)
+            .field("url", .json).unique(on: "url")
             .field("source_id", .string, .references("content_sources", "id"))
     }
 
@@ -20,7 +20,8 @@ public final class LearningContent: Model, Content {
         case video
 
         public static func schemaBuilder(for database: Database) -> EnumBuilder {
-            database.enum("blogPost")
+            database.enum("learning_content_kind")
+                .case("blogPost")
                 .case("podcastEpisode")
                 .case("video")
         }
@@ -46,7 +47,7 @@ public final class LearningContent: Model, Content {
 
     public init() { }
 
-    public init(id: UUID? = nil, title: String, kind: Kind, url: URL, sourceId: String) {
+    public init(id: UUID? = nil, title: String, kind: Kind, url: URL, sourceId: ContentSourceId) {
         self.id = id
         self.title = title
         self.kind = kind
