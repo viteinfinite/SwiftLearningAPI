@@ -22,19 +22,19 @@ extension IndexableBlogPost {
     }
 }
 
-extension Array where Element == IndexableBlogPost {
-    func save(to db: Database, on eventLoop: EventLoop) -> EventLoopFuture<Void> {
-        return authorFutures(to: db, on: eventLoop)
-            .flatMap { self.learningContentFutures(to: db, on: eventLoop) }
+class IndexableBlogPostDBCoordinator {
+    static func save(_ indexableBlogPosts: [IndexableBlogPost], to db: Database, on eventLoop: EventLoop) -> EventLoopFuture<Void> {
+        return authorFutures(for: indexableBlogPosts, to: db, on: eventLoop)
+            .flatMap { self.learningContentFutures(for: indexableBlogPosts, to: db, on: eventLoop) }
     }
 
-    private func authorFutures(to db: Database, on eventLoop: EventLoop) -> EventLoopFuture<Void> {
-        let uniqueAuthors = Array<Author>(Set(compactMap { $0.author }))
+    private static func authorFutures(for indexableBlogPosts: [IndexableBlogPost], to db: Database, on eventLoop: EventLoop) -> EventLoopFuture<Void> {
+        let uniqueAuthors = Array<Author>(Set(indexableBlogPosts.compactMap { $0.author }))
         return EventLoopFuture.andAllComplete(uniqueAuthors.map { $0.save(on: db) }, on: eventLoop)
     }
 
-    private func learningContentFutures(to db: Database, on eventLoop: EventLoop) -> EventLoopFuture<Void> {
-        let futures = map { insertableBlogPost -> EventLoopFuture<Void> in
+    private static func learningContentFutures(for indexableBlogPosts: [IndexableBlogPost], to db: Database, on eventLoop: EventLoop) -> EventLoopFuture<Void> {
+        let futures = indexableBlogPosts.map { insertableBlogPost -> EventLoopFuture<Void> in
             return insertableBlogPost.learningContent.save(on: db).flatMap {
                 guard let author = insertableBlogPost.author else { return eventLoop.makeSucceededFuture(()) }
                 return insertableBlogPost.learningContent.$authors.attach(author, on: db)

@@ -61,9 +61,11 @@ class RSSJob: Job {
     }
 
     private func createEntriesInDb(context: QueueContext, contentSourceProvider: ContentSourceProvider, insertableBlogPosts: [IndexableBlogPost]) -> EventLoopFuture<Void> {
-        insertableBlogPosts
-            .map { contentSourceProvider.enrich($0) }
-            .save(to: db, on: context.eventLoop)
+        IndexableBlogPostDBCoordinator.save(
+            insertableBlogPosts.map { contentSourceProvider.enrich($0) },
+            to: db,
+            on: context.eventLoop
+        )
     }
 
     func dequeue(_ context: QueueContext, _ payload: [ContentSourceId]) -> EventLoopFuture<Void> {
