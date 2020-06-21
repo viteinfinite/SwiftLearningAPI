@@ -23,7 +23,7 @@ public final class LearningContentAuthor: Model {
 
     public init() { }
 
-    public init(learningContentId: UUID, authorId: String) {
+    public init(learningContentId: UUID, authorId: AuthorId) {
         self.$learningContent.id = learningContentId
         self.$author.id = authorId
     }

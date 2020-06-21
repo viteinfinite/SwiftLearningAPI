@@ -2,6 +2,8 @@ import Foundation
 import Vapor
 import Fluent
 
+public typealias AuthorId = Identifier<Author>
+
 public final class Author: Model, Hashable {
     public static let schema = "authors"
 
@@ -12,7 +14,7 @@ public final class Author: Model, Hashable {
     }
 
     @ID(custom: "id", generatedBy: .user)
-    public var id: String?
+    public var id: AuthorId?
 
     @Field(key: "name")
     public var name: String
@@ -23,10 +25,10 @@ public final class Author: Model, Hashable {
     public init() { }
 
     public init(name: String) {
-        self.id = name
-            .lowercased()
+        self.id = AuthorId(name.lowercased()
             .components(separatedBy: .whitespacesAndNewlines)
             .joined(separator: "-")
+        )
         self.name = name
     }
 
