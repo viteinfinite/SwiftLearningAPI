@@ -2,6 +2,8 @@ import Foundation
 import Vapor
 import Fluent
 
+public typealias ContentSourceId = Identifier<ContentSource>
+
 public final class ContentSource: Model, Content {
     public static let schema = "content_sources"
 
@@ -16,7 +18,7 @@ public final class ContentSource: Model, Content {
     }
 
     @ID(custom: "id", generatedBy: .user)
-    public var id: String?
+    public var id: ContentSourceId?
 
     @Field(key: "name")
     public var name: String
@@ -38,7 +40,7 @@ public final class ContentSource: Model, Content {
 
     public init() { }
 
-    public init(id: String, name: String, rssUrl: URL?, podcastUrl: URL?, playlistUrl: URL?, websiteUrl: URL?) {
+    public init(id: ContentSourceId, name: String, rssUrl: URL?, podcastUrl: URL?, playlistUrl: URL?, websiteUrl: URL?) {
         self.id = id
         self.name = name
         self.rssUrl = rssUrl

@@ -5,7 +5,7 @@ import Vapor
 import Fluent
 
 extension IndexableBlogPost {
-    static func from(rssFeedItem: RSSFeedItem, contentSourceId: String) -> Self? {
+    static func from(rssFeedItem: RSSFeedItem, contentSourceId: ContentSourceId) -> Self? {
         guard let urlString = rssFeedItem.link, let url = URL(string: urlString) else { return nil }
         return IndexableBlogPost(
             author: rssFeedItem.author.map { Author(name: $0) },
@@ -13,7 +13,7 @@ extension IndexableBlogPost {
         )
     }
 
-    static func from(atomFeedEntry: AtomFeedEntry, contentSourceId: String) -> Self? {
+    static func from(atomFeedEntry: AtomFeedEntry, contentSourceId: ContentSourceId) -> Self? {
         guard let urlString = atomFeedEntry.links?.first?.attributes?.href, let url = URL(string: urlString) else { return nil }
         return IndexableBlogPost(
             author: atomFeedEntry.authors?.first?.name.map { Author(name: $0) },

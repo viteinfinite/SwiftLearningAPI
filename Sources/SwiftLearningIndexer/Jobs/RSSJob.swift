@@ -7,21 +7,21 @@ import Fluent
 
 class RSSJob: Job {
     enum Error: Swift.Error {
-        case missingUrl(contentSourceId: String)
-        case contentSourceProviderNotFound(contentSourceId: String)
+        case missingUrl(contentSourceId: ContentSourceId)
+        case contentSourceProviderNotFound(contentSourceId: ContentSourceId)
     }
 
     private let client: Client
     private let db: Database
 
-    private func fetchRSS(_ context: QueueContext, payload: [String]) -> EventLoopFuture<Void> {
+    private func fetchRSS(_ context: QueueContext, payload: [ContentSourceId]) -> EventLoopFuture<Void> {
         return EventLoopFuture.andAllComplete(
             payload.map { fetchRSS(context, contentSourceId: $0) },
             on: context.eventLoop
         )
     }
 
-    private func fetchRSS(_ context: QueueContext, contentSourceId: String) -> EventLoopFuture<Void> {
+    private func fetchRSS(_ context: QueueContext, contentSourceId: ContentSourceId) -> EventLoopFuture<Void> {
         guard let contentSourceProvider = AllContentSourceProviders.contentSourceProviderById[contentSourceId] else {
             return context.eventLoop.makeFailedFuture(RSSJob.Error.contentSourceProviderNotFound(contentSourceId: contentSourceId))
         }
@@ -66,7 +66,7 @@ class RSSJob: Job {
             .save(to: db, on: context.eventLoop)
     }
 
-    func dequeue(_ context: QueueContext, _ payload: [String]) -> EventLoopFuture<Void> {
+    func dequeue(_ context: QueueContext, _ payload: [ContentSourceId]) -> EventLoopFuture<Void> {
         fetchRSS(context, payload: payload)
     }
 

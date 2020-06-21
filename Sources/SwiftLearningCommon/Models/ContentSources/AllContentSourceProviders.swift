@@ -5,7 +5,7 @@ public enum AllContentSourceProviders {
     public static var allContentSourceProviders = [
 ContentSourceProvider(
     source: ContentSource(
-        id: "swift-by-sundell",
+        id: Identifier("swift-by-sundell"),
         name: "Swift by Sundell",
         rssUrl: URL(string: "https://swiftbysundell.com/rss")!,
         podcastUrl: nil,
